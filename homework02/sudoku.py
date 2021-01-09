@@ -51,7 +51,6 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
                 array[j][k] = values[i]
                 i = i + 1
     return array
-    pass
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -65,7 +64,6 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     """
     a = grid[pos[0]]
     return a
-    pass
 
 
 def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -81,7 +79,6 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     for i in range(len(grid[0])):
         a[i]=grid[i][pos[1]]
     return a
-    pass
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -101,7 +98,6 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
             a[k] = grid[pos[0] - pos[0]%3 + i][pos[1] - pos[1]%3 + j]
             k = k + 1
     return a
-    pass
 
 
 def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[int, int]]:
@@ -126,7 +122,6 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
         i = 0
         j = j + 1
     return(a,b)
-    pass
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
@@ -142,7 +137,6 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     a = set('123456789')
     a = a - set(get_row(grid, pos)) - set(get_col(grid, pos)) - set(get_block(grid, pos))
     return a
-    pass
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
@@ -157,14 +151,14 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    pos = find_empty_positions(grid)
-    i,j = pos
-    sys.setrecursionlimit(1000000000)
-    for value in find_possible_values(grid,pos):
-        grid[i][j] = value
-        answer = solve(grid)
-        if answer:
-            return(answer)
+    for i in range(81):
+        pos = find_empty_positions(grid)
+        if not pos:
+            return (grid)
+        j, k = pos
+        grid[j][k] = find_possible_values(grid,pos)
+        if grid:
+            return (grid)
     return []
 
 
@@ -222,12 +216,11 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     i = 0
     while i < 9 * 9 - N:
         raw = random.randint(0, 8)
-        col = random.randint(0, 8)
-        if grid0[raw][col] != '.':
-            grid0[raw][col] = '.'
-            i = i + 1
-    return(grid0)
-    pass
+    col = random.randint(0, 8)
+    if grid0[raw][col] != '.':
+        grid0[raw][col] = '.'
+        i = i + 1
+    return (grid0)
 
 
 if __name__ == "__main__":
