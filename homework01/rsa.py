@@ -5,7 +5,6 @@ import typing as tp
 def is_prime(n: int) -> bool:
     """
     Tests to see if a number is prime.
-
     >>> is_prime(2)
     True
     >>> is_prime(11)
@@ -14,19 +13,29 @@ def is_prime(n: int) -> bool:
     False
     """
     # PUT YOUR CODE HERE
+    b = True
+    for i in range(2, n):
+        if n % i == 0:
+            b = False
+            break
+    return b
     pass
 
 
 def gcd(a: int, b: int) -> int:
     """
     Euclid's algorithm for determining the greatest common divisor.
-
     >>> gcd(12, 15)
     3
     >>> gcd(3, 7)
     1
     """
     # PUT YOUR CODE HERE
+    gcf = 1
+    for i in range(1, max(a, b) + 1):
+        if a % i == 0 and b % i == 0:
+            gcf = i
+    return gcf
     pass
 
 
@@ -34,11 +43,40 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     """
     Euclid's extended algorithm for finding the multiplicative
     inverse of two numbers.
-
     >>> multiplicative_inverse(7, 40)
     23
     """
     # PUT YOUR CODE HERE
+    a0 = phi
+    b0 = e
+    c0 = 1
+    counter = 0
+    while c0 != 0:
+        c0 = a0 % b0
+        a0 = b0
+        b0 = c0
+        counter = counter + 1
+    a = [0] * 10
+    b = [0] * 10
+    c = [0] * 10
+    g = [0] * 10
+    a[0] = phi
+    b[0] = e
+    for i in range(counter):
+        c[i] = a[i] % b[i]
+        g[i] = a[i] // b[i]
+        if i < counter - 1:
+            a[i + 1] = b[i]
+            b[i + 1] = c[i]
+    x = [0] * 10
+    y = [0] * 10
+    x[counter - 1] = 0
+    y[counter - 1] = 1
+    for i in range(1, counter):
+        x[counter - 1 - i] = y[counter - i]
+        y[counter - 1 - i] = x[counter - i] - y[counter - i] * g[counter - 1 - i]
+    d = y[0] % phi
+    return d
     pass
 
 
@@ -50,9 +88,11 @@ def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[in
 
     # n = pq
     # PUT YOUR CODE HERE
+    n = p * q
 
     # phi = (p-1)(q-1)
     # PUT YOUR CODE HERE
+    phi = (p - 1) * (q - 1)
 
     # Choose an integer e such that e and phi(n) are coprime
     e = random.randrange(1, phi)
