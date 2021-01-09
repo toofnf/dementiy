@@ -1,7 +1,6 @@
 import pathlib
-import sys
+import random
 import typing as tp
-from random import random
 
 T = tp.TypeVar("T")
 
@@ -187,7 +186,6 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
                 cheking_block = set(get_block(solution, b))
                 if sorted(a) != sorted(cheking_col):
                     return False
-    pass
 
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
@@ -215,12 +213,12 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     grid0 = solve(empty_grid)
     i = 0
     while i < 9 * 9 - N:
-        raw = random.randint(0, 8)
-    col = random.randint(0, 8)
-    if grid0[raw][col] != '.':
-        grid0[raw][col] = '.'
+        row = random.randint(0,8)
+    col = random.randint(0,8)
+    if grid[row][col] != '.':
+        grid[row][col] = '.'
         i = i + 1
-    return (grid0)
+    return (grid)
 
 
 if __name__ == "__main__":
