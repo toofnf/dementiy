@@ -1,5 +1,7 @@
 import pathlib
+import sys
 import typing as tp
+from random import random
 
 T = tp.TypeVar("T")
 
@@ -123,7 +125,7 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
             i = i + 1
         i = 0
         j = j + 1
-    print('(' + str(a) + ', ' + str(b) + ')')
+    return(a,b)
     pass
 
 
@@ -137,10 +139,8 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> values == {'2', '5', '9'}
     True
     """
-    a = set('1234567890')
-    for i in range(9):
-        if i in get_row(grid,pos) or i in get_col(grid,pos) or i in get_block(grid,pos):
-        a.remove(i+1)
+    a = set('123456789')
+    a = a - set(get_row(grid, pos)) - set(get_col(grid, pos)) - set(get_block(grid, pos))
     return a
     pass
 
@@ -157,12 +157,42 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    pass
+    pos = find_empty_positions(grid)
+    i,j = pos
+    sys.setrecursionlimit(1000000000)
+    for value in find_possible_values(grid,pos):
+        grid[i][j] = value
+        answer = solve(grid)
+        if answer:
+            return(answer)
+    return []
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
     # TODO: Add doctests with bad puzzles
+    a = ('1', '2', '3', '4', '5', '6', '7', '8', '9')
+    b = [0]*2
+    for i in range(9):
+        b[0] = i
+        b[1] = 0
+        cheking_row = set(get_row(solution, b))
+        if sorted(a) != sorted(cheking_row):
+            return False
+
+        b[0] = i
+        b[1] = 0
+        cheking_col = set(get_col(solution, b))
+        if sorted(a) != sorted(cheking_col):
+            return False
+
+        if i % 3 == 0:
+            for j in (0,3,6):
+                b[0]=i
+                b[1]=j
+                cheking_block = set(get_block(solution, b))
+                if sorted(a) != sorted(cheking_col):
+                    return False
     pass
 
 
@@ -187,6 +217,16 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     >>> check_solution(solution)
     True
     """
+    empty_grid = ([['.'] * 9 for i in range(9)])
+    grid0 = solve(empty_grid)
+    i = 0
+    while i < 9 * 9 - N:
+        raw = random.randint(0, 8)
+        col = random.randint(0, 8)
+        if grid0[raw][col] != '.':
+            grid0[raw][col] = '.'
+            i = i + 1
+    return(grid0)
     pass
 
 
