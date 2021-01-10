@@ -1,6 +1,7 @@
 import pathlib
-import random
 import typing as tp
+from random import random
+import random
 
 T = tp.TypeVar("T")
 
@@ -43,8 +44,8 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
     i = 0
-    array = [["" for j in range(n)] for i in range(len(values)//n)]
-    for j in range(len(values)//n):
+    array = [["" for j in range(n)] for i in range(len(values) // n)]
+    for j in range(len(values) // n):
         for k in range(n):
             if i < len(values):
                 array[j][k] = values[i]
@@ -74,9 +75,9 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    a=[0]*len(grid[0])
+    a = [0] * len(grid[0])
     for i in range(len(grid[0])):
-        a[i]=grid[i][pos[1]]
+        a[i] = grid[i][pos[1]]
     return a
 
 
@@ -90,11 +91,11 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     >>> get_block(grid, (8, 8))
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
-    a = [0]*9
+    a = [0] * 9
     k = 0
     for i in range(3):
         for j in range(3):
-            a[k] = grid[pos[0] - pos[0]%3 + i][pos[1] - pos[1]%3 + j]
+            a[k] = grid[pos[0] - pos[0] % 3 + i][pos[1] - pos[1] % 3 + j]
             k = k + 1
     return a
 
@@ -108,19 +109,12 @@ def find_empty_positions(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.Tuple[in
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    i = 0
-    j = 0
-    a = -1
-    b = -1
-    while j < 3 and a < 0:
-        while i < 3 and b < 0:
-            if grid[i][j] == ".":
-                a = i
-                b = j
-            i = i + 1
-        i = 0
-        j = j + 1
-    return(a,b)
+    n = len(grid)
+    for r in range(n):
+        for c in range(n):
+            if grid[r][c] == '.':
+                return (r, c)
+    return False
 
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
@@ -150,22 +144,25 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     >>> solve(grid)
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
-    for i in range(81):
-        pos = find_empty_positions(grid)
-        if not pos:
-            return (grid)
-        j, k = pos
-        grid[j][k] = find_possible_values(grid,pos)
-        if grid:
-            return (grid)
-    return []
+    pos = find_empty_positions(grid)
+    if not pos:
+        return grid
+    i, j = pos
+    values = find_possible_values(grid, pos)
+    for value in values:
+        grid[i][j] = value
+        answer = solve(grid)
+        if answer:
+            return answer
+    grid[i][j] = "."  # если мы не нашли ответ, то нужно заполнить пустым значением
+    return False
 
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """ Если решение solution верно, то вернуть True, в противном случае False """
     # TODO: Add doctests with bad puzzles
     a = ('1', '2', '3', '4', '5', '6', '7', '8', '9')
-    b = [0]*2
+    b = [0] * 2
     for i in range(9):
         b[0] = i
         b[1] = 0
@@ -180,12 +177,13 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
             return False
 
         if i % 3 == 0:
-            for j in (0,3,6):
-                b[0]=i
-                b[1]=j
+            for j in (0, 3, 6):
+                b[0] = i
+                b[1] = j
                 cheking_block = set(get_block(solution, b))
-                if sorted(a) != sorted(cheking_col):
+                if sorted(a) != sorted(cheking_block):
                     return False
+    return True
 
 
 def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
@@ -212,13 +210,14 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     empty_grid = ([['.'] * 9 for i in range(9)])
     grid0 = solve(empty_grid)
     i = 0
+
     while i < 9 * 9 - N:
-        row = random.randint(0,8)
-    col = random.randint(0,8)
-    if grid[row][col] != '.':
-        grid[row][col] = '.'
-        i = i + 1
-    return (grid)
+        raw = random.randint(0, 8)
+        col = random.randint(0, 8)
+        if grid0[raw][col] != '.':
+            grid0[raw][col] = '.'
+            i = i + 1
+    return (grid0)
 
 
 if __name__ == "__main__":
