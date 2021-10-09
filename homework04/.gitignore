@@ -31,7 +31,7 @@ pip-delete-this-directory.txt
 .cache
 nosetests.xml
 coverage.xml
-.pyvcs
+#.pyvcs
 #.pyvcs/
 #*.pyvcs/
 # Translations
