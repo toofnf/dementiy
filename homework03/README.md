@@ -1,50 +1,83 @@
-Запустить тесты можно так:
+# Игра "Жизнь"
+
+- `./data` - исходные данные в виде `.txt` файлов:
+
 
 ```
+./data/inp.txt
+
+01000
+00100
+11100
+00000
+00000
+```
+
+- запуск тестов в папке `./tests` производится с помощью команды:
+
+```bash
 python -m unittest discover
-test_can_create_a_random_grid (test_life.TestGameOfLife) ... ok
-test_can_create_an_empty_grid (test_life.TestGameOfLife) ... ok
-test_can_update (test_life.TestGameOfLife) ... ok
-test_get_neighbours (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_bottom_side (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_left_side (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_lower_left_corner (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_lower_right_corner (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_right_side (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_upper_left_corner (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_upper_right_corner (test_life.TestGameOfLife) ... ok
-test_get_neighbours_for_upper_side (test_life.TestGameOfLife) ... ok
-test_is_changing (test_life.TestGameOfLife) ... ok
-test_is_max_generations_exceed (test_life.TestGameOfLife) ... ok
-test_is_not_changing (test_life.TestGameOfLife) ... ok
-test_prev_generation_is_correct (test_life.TestGameOfLife) ... ok
-
-----------------------------------------------------------------------
-Ran 16 tests in 0.026s
-
-OK
-
-test_can_create_a_random_grid (test_life_proto.TestGameOfLife) ... ok
-test_can_create_an_empty_grid (test_life_proto.TestGameOfLife) ... ok
-test_can_update (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_bottom_side (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_left_side (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_lower_left_corner (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_lower_right_corner (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_right_side (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_upper_left_corner (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_upper_right_corner (test_life_proto.TestGameOfLife) ... ok
-test_get_neighbours_for_upper_side (test_life_proto.TestGameOfLife) ... ok
-
-----------------------------------------------------------------------
-Ran 12 tests in 1.015s
-
-OK
-............................
-----------------------------------------------------------------------
-Ran 28 tests in 0.047s
-
-OK
 ```
 
+![Test](./images/tests.png)
+
+- примеры запусков файлов:
+
+1. `life_gui.py`:
+
+- `life_gui.py --help`
+
+```bash
+usage: life_gui.py [-h] --rows R --cols C --max-iterations IT
+                   [--cell-size CS] [--input-filename IN]
+
+Игра жизнь
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --rows R, -r R        Количество строк
+  --cols C, -c C        Количество столбцов
+  --max-iterations IT, -it IT
+                        Количество итераций
+  --cell-size CS, -cs CS
+                        Размер ячейки
+  --input-filename IN, -in IN
+                        Путь к файлу с входными данными
+
+
+```
+
+- пример запуска:
+
+```bash
+./ > life_gui.py --rows 20 --cols 20 --max-iterations 1000 --cell-size 15
+```
+
+После этого необходимо нажать на любую кнопку для запуска игры. 
+
+Для остановки игры и использовании паузы для расстановки новых клеток необходимо еще раз нажать на любую кнопку и расставить клеточки.
+
+![Test](./images/start_position_gui.png)
+
+
+2. `life_console.py`
+
+- `life_console.py --help`
+
+```bash
+usage: life_console.py [-h] --width W --height HEI [--max-iterations IT]
+
+Игра жизнь
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --width W, -w W       Ширина
+  --height HEI, -hei HEI
+                        Высота
+  --max-iterations IT, -it IT
+                        Количество итераций
+
+```
+
+
+![Test](./images/start_position_console.png)
