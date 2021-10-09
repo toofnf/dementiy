@@ -6,7 +6,7 @@ from typing import List, Tuple, Optional
 
 Cell = Tuple[int, int]
 Cells = List[int]
-Grid = List[List[int]]
+Grid = List[Cells]
 
 
 class GameOfLife:
