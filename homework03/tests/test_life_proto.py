@@ -101,7 +101,7 @@ class TestGameOfLife(unittest.TestCase):
         game.grid = self.grid
 
         tests_dir = os.path.dirname(__file__)
-        steps_path = os.path.join(tests_dir, "steps.txt")
+        steps_path = os.path.join(tests_dir, "steps.json")
         with open(steps_path) as f:
             steps = json.load(f)
 
