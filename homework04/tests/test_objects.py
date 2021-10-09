@@ -17,6 +17,10 @@ class HashObjectTestCase(TestCase):
         self.setUpPyfakefs()
 
     def test_compute_object_id(self):
+        """
+        DONE
+        :return:
+        """
         contents = "that's what she said"
         data = contents.encode()
         sha = objects.hash_object(data, fmt="blob")
@@ -24,6 +28,10 @@ class HashObjectTestCase(TestCase):
         self.assertEqual(expected_sha, sha)
 
     def test_compute_object_id_and_create_a_blob(self):
+        """
+        DONE
+        :return:
+        """
         gitdir = repo.repo_create(".")
 
         contents = "that's what she said"
@@ -40,6 +48,10 @@ class HashObjectTestCase(TestCase):
         self.assertEqual(b"blob 20\x00that's what she said", content)
 
     def test_hash_object_twice(self):
+        """
+        DONE
+        :return:
+        """
         _ = repo.repo_create(".")
 
         contents = "that's what she said"
