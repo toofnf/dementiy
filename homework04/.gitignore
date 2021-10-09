@@ -31,6 +31,9 @@ pip-delete-this-directory.txt
 .cache
 nosetests.xml
 coverage.xml
+.pyvcs
+.pyvcs/
+*.pyvcs/
 # Translations
 *.mo
 # Mr Developer
