@@ -12,6 +12,10 @@ class RepoCreateTestCase(TestCase):
         self.setUpPyfakefs()
 
     def test_created_repo_has_the_correct_structure(self):
+        """
+        DONE
+        :return:
+        """
         workdir = pathlib.Path(".")
         gitdir = repo.repo_create(workdir)
 
@@ -43,6 +47,10 @@ class RepoCreateTestCase(TestCase):
             )
 
     def test_cant_create_repo_if_workdir_is_a_file(self):
+        """
+        DONE
+        :return:
+        """
         filename = "test"
         workdir = pathlib.Path(filename)
         self.fs.create_file(workdir, contents="test")
@@ -51,6 +59,10 @@ class RepoCreateTestCase(TestCase):
         self.assertEqual(f"{filename} is not a directory", str(ctx.exception))
 
     def test_git_dir(self):
+        """
+        DONE
+        :return:
+        """
         dir_name = ".pyvcs"
         os.environ["GIT_DIR"] = dir_name
         workdir = pathlib.Path(".")
@@ -66,6 +78,10 @@ class RepoFindTestCase(TestCase):
         self.setUpPyfakefs()
 
     def test_repo_find(self):
+        """
+        DONE
+        :return:
+        """
         workdir = pathlib.Path(".")
         workdir = workdir.absolute()
         expected_gitdir = workdir / ".git"
@@ -74,6 +90,10 @@ class RepoFindTestCase(TestCase):
         self.assertEqual(expected_gitdir, gitdir)
 
     def test_repo_find_in_a_given_dir(self):
+        """
+        DONE
+        :return:
+        """
         expected_gitdir = pathlib.Path("dir1") / ".git"
         expected_gitdir = expected_gitdir.absolute()
         current_dir = expected_gitdir / "dir2"
@@ -82,6 +102,10 @@ class RepoFindTestCase(TestCase):
         self.assertEqual(expected_gitdir, gitdir)
 
     def test_repo_not_found(self):
+        """
+        DONE
+        :return:
+        """
         with self.assertRaises(Exception) as ctx:
             _ = repo.repo_find()
         self.assertEqual("Not a git repository", str(ctx.exception))
