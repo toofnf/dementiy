@@ -1,0 +1,4 @@
+sqlalchemy
+beautifulsoup4
+requests
+bottle
