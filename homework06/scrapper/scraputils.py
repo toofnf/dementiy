@@ -25,12 +25,21 @@ def extract_news(parser: BeautifulSoup,
         url_link = url + url_link if url_link.startswith('item') else url_link
         title = ref.text
 
+        comments = 0
+        for i in user.findAll('a'):
+            text = i.text
+            if 'comment' in text:
+                comments = int(
+                    text.replace('\xa0', ' ').split(' ')[0]
+                )
+
         news_list.append(
             {
+                'author': author,
+                'comments': comments,
+                'points': point,
                 'title': title,
                 'url': url_link,
-                'author': author,
-                'point': point
             }
         )
 
@@ -41,7 +50,10 @@ def extract_next_page(parser: BeautifulSoup) -> str:
     return parser.select('a.morelink')[0]['href']
 
 
-def get_news(url, n_pages=1):
+def get_news(
+        url: str = "https://news.ycombinator.com/newest",
+        n_pages=1
+):
     """ Collect news from a given web page """
     news = []
     while n_pages:
