@@ -2,7 +2,7 @@ from bottle import (
     route, run, template, redirect
 )
 
-# from scrapper import get_news
+from scrapper.scraputils import get_news
 from scrapper.db import News, session
 
 
