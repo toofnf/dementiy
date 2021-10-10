@@ -2,3 +2,5 @@ sqlalchemy
 beautifulsoup4
 requests
 bottle
+numpy
+scikit-learn
