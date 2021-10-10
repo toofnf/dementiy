@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-engine = create_engine("sqlite:///news.db")
+engine = create_engine("sqlite:///../database/news.db")
 session = sessionmaker(bind=engine)
 
 
