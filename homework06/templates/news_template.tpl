@@ -7,6 +7,10 @@
     </head>
     <body>
         <div class="ui container" style="padding-top: 10px;">
+        <form action="/update" method="post">
+            Amount of Pages: <input name="page" type="text" value=1 />
+            <input class="ui right floated small primary button" value="I Wanna more Hacker News!" type="submit" />
+        </form>
         <table class="ui celled table">
             <thead>
                 <th>Title</th>
@@ -28,13 +32,7 @@
                 </tr>
                 %end
             </tbody>
-            <tfoot class="full-width">
-                <tr>
-                    <th colspan="7">
-                        <a href="/update" class="ui right floated small primary button">I Wanna more Hacker News!</a>
-                    </th>
-                </tr>
-            </tfoot>
+
         </table>
         </div>
     </body>

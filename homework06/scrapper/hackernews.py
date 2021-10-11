@@ -41,13 +41,15 @@ def add_label():
     redirect("/news")
 
 
-@route("/update")
+@route("/update", method=["POST"])
 def update_news():
+    n_pages = request.forms.get('page')
+    n_pages = int(n_pages) if n_pages else 1
+
     s = session()
+    parse_news = get_news(n_pages=n_pages)
 
     # 1. Получить данные с новостного сайта
-
-    parse_news = get_news()
 
     for news in parse_news:
         title, author = news['title'], news['author']
