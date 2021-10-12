@@ -55,7 +55,29 @@ def commit_tree(
         tree: str,
         message: str,
         parent: tp.Optional[str] = None,
-        author: tp.Optional[str] = None,
+        author: tp.Optional[str] = "Dementiy <Dementiy@yandex.ru>",
 ) -> str:
-    # PUT YOUR CODE HERE
-    ...
+    if (
+            author is None
+            and "GIT_AUTHOR_NAME" in os.environ
+            and "GIT_AUTHOR_EMAIL" in os.environ
+    ):
+        get_name = os.getenv("GIT_AUTHOR_NAME")
+        get_email = os.getenv("GIT_AUTHOR_EMAIL")
+        author = f"""{get_name} <{get_email}>"""
+
+    absolute = abs(time.timezone) // 60
+    localtime = int(time.mktime(time.localtime()))
+    sign = '-' if time.timezone > 0 else '+'
+    times = f"{absolute // 60:02}{absolute % 60:02}"
+    timezone = sign + times
+    data = [
+        f"tree {tree}",
+        f"parent {parent}" if parent is not None else "",
+        f"author {author} {localtime} {timezone}",
+        f"committer {author} {localtime} {timezone}",
+        f"\n{message}\n"
+    ]
+    data = '\n'.join([x for x in data if x != ""])
+
+    return hash_object(data.encode(), "commit", write=True)
