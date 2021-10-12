@@ -46,8 +46,9 @@ class GitIndexEntry(tp.NamedTuple):
                 + "20s"  # 20 Bytes
                 + "h"  # short (2 bytes)
                 + f"{str(n)}s"  # len(str) # variable length
-                + f"{str(8 - (62 + n) % 8)}x"  # 1-8 nul bytes as necessary to pad the entry to a multiple of eight bytes
-                                               # while keeping the name NUL-terminated.
+                + f"{str(8 - (62 + n) % 8)}x"
+        # 1-8 nul bytes as necessary to pad the entry to a multiple of eight bytes
+            # while keeping the name NUL-terminated.
         )
         args = [
             self.ctime_s, self.ctime_n, self.mtime_s, self.mtime_n,
@@ -66,11 +67,11 @@ class GitIndexEntry(tp.NamedTuple):
         """
         n = len(data)
         formatter = (
-            ">"  # big-endian
-            + "10I"  # 10 Unsigned INT
-            + "20s"  # 20 Bytes
-            + "h"  # short (2 bytes)
-            + f"{str(n - 62)}s"
+                ">"  # big-endian
+                + "10I"  # 10 Unsigned INT
+                + "20s"  # 20 Bytes
+                + "h"  # short (2 bytes)
+                + f"{str(n - 62)}s"
         )
         unpack = list(struct.unpack(formatter, data))
         unpack[-1] = unpack[-1].split(b"\00")[0].decode()
@@ -91,8 +92,10 @@ def read_index(gitdir: pathlib.Path) -> tp.List[GitIndexEntry]:
     with open(index, "rb") as file:
         data = file.read()
 
-    result, header, main_content = [], data[8:12], data[12:]
-    n = len(main_content)
+    result = []  # список индексов
+    header = data[8:12]  # число записей в байтах
+    main_content = data[12:]  # информация о индексах
+    n = len(main_content)  # количества файлов
     unpacked = struct.unpack(">I", header)[0]
 
     for _ in range(unpacked):
@@ -111,9 +114,25 @@ def read_index(gitdir: pathlib.Path) -> tp.List[GitIndexEntry]:
     return result
 
 
-def write_index(gitdir: pathlib.Path, entries: tp.List[GitIndexEntry]) -> None:
+def write_index(
+        gitdir: pathlib.Path,
+        entries: tp.List[GitIndexEntry]) -> None:
     """
     :version: 0.4.0
+
+    Индекс является бинарным файлом и имеет следующий формат:
+
+    DIRC <номер версии> <число записей>
+    <множество записей>
+    <расширения>
+    <sha>
+
+    Будем использовать вторую версию, поэтому файл выглядит таким образом
+
+    DIRC[version=<\00\00\00\02>][число записей<\x00\x00\x00\x05>]
+    <множество записей>
+    <расширения> - не используются во второй версии
+    <sha> - хэш сумма данных
 
     :param gitdir:
     :param entries:
@@ -123,7 +142,7 @@ def write_index(gitdir: pathlib.Path, entries: tp.List[GitIndexEntry]) -> None:
     with open(index, "wb") as f:
         data = (
                 b"DIRC\00\00\00\02"  # dircache + version 2 (как в тестах)
-                + struct.pack(">I", len(entries))  # количество файлов
+                + struct.pack(">I", len(entries))  # число записей
                 + b''.join([i.pack() for i in entries])
         )
         sha = hashlib.sha1(data)
@@ -134,6 +153,17 @@ def write_index(gitdir: pathlib.Path, entries: tp.List[GitIndexEntry]) -> None:
 def ls_files(gitdir: pathlib.Path,
              details: bool = False) -> None:
     """
+    Более подробная информация о записях в индексе
+
+    Флаг -s
+
+    Вывод состоит из четырех столбцов:
+
+    - права доступа на файл
+    - хеш-сумма (имя/идентификатор объекта) (hex)
+    - наличие конфликтов при слиянии веток (0 - конфилктов нет)
+    - путь к файлу
+
     :version: 0.4.0
 
     :param gitdir:
@@ -141,8 +171,10 @@ def ls_files(gitdir: pathlib.Path,
     :return:
     """
     for entry in read_index(gitdir):
-        print(f"{entry.mode:o} {entry.sha1.hex()} 0\t{entry.name}"
-              if details else entry.name)
+        print(
+            f"{entry.mode:o} {entry.sha1.hex()} 0\t{entry.name}"
+            if details else entry.name
+        )
 
 
 def update_index(gitdir: pathlib.Path,
@@ -164,22 +196,35 @@ def update_index(gitdir: pathlib.Path,
 
         stat = os.stat(path)
         hsh = hash_object(data, "blob", write=True)
-        entries.append(
-            GitIndexEntry(
-                ctime_s=int(stat.st_ctime),
-                ctime_n=0, # по условию
-                mtime_s=int(stat.st_mtime),
-                mtime_n=0, # по условию
-                dev=stat.st_dev,
-                ino=stat.st_ino,
-                mode=stat.st_mode,
-                uid=stat.st_uid,
-                gid=stat.st_gid,
-                size=stat.st_size,
-                sha1=bytes.fromhex(hsh),
-                flags=1,
-                name=str(path).replace('\\', '/'),  # windows
-            )
+
+        pth = str(path).replace('\\', '/')
+        entry = GitIndexEntry(
+            ctime_s=int(stat.st_ctime),
+            ctime_n=0,  # по условию
+            mtime_s=int(stat.st_mtime),
+            mtime_n=0,  # по условию
+            dev=stat.st_dev,
+            ino=stat.st_ino,
+            mode=stat.st_mode,
+            uid=stat.st_uid,
+            gid=stat.st_gid,
+            size=stat.st_size,
+            sha1=bytes.fromhex(hsh),
+            flags=1,
+            name=pth,  # windows
         )
+        if entry in entries:
+            print('find you')
+            compare_entry: GitIndexEntry = entries[entries.index(entry)]
+            print(compare_entry.sha1.hex() == hsh, compare_entry.name == pth)
+            if compare_entry.sha1.hex() == hsh and compare_entry.name == pth:
+                continue
+            else:
+                entries.remove(compare_entry)
+        names = [ent.name for ent in entries]
+        if pth in names:
+            del entries[names.index(pth)]
+        entries.append(entry)
+
     if write:
         write_index(gitdir, sorted(entries, key=lambda x: x.name))
