@@ -116,7 +116,6 @@ def read_tree(data: bytes) -> tp.List[tp.Tuple[int, str, str]]:
     return tree
 
 
-
 def cat_file(obj_name: str, pretty: bool = True) -> None:
     """
     :version: 0.3.0
