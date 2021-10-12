@@ -1,20 +1,19 @@
 import os
 import pathlib
 import typing as tp
+import sys
 
 
 def repo_find(workdir: tp.Union[str, pathlib.Path] = ".",
-              default=".pyvcs",
-              windows=True) -> pathlib.Path:
+              default=".pyvcs") -> pathlib.Path:
     """
     :version: 0.1.0
 
-    :param windows:
     :param default:
     :param workdir:
     :return:
     """
-    root_dir = "\\" if windows else "/"
+    root_dir = "/" if sys.platform == "linux" else "\\"
 
     # все данные репозитория расположены в каталоге .git
     # имя можно изменить через переменную окружения GIT_DIR
