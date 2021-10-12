@@ -13,6 +13,10 @@ def write_tree(
         gitdir: pathlib.Path,
         index: tp.List[GitIndexEntry],
         dirname: str = "") -> str:
+    """
+    :version: 0.5.0
+
+    """
     tree = []
     sub_folder = {}
     directory_mode = 0o40000
@@ -57,6 +61,10 @@ def commit_tree(
         parent: tp.Optional[str] = None,
         author: tp.Optional[str] = "Dementiy <Dementiy@yandex.ru>",
 ) -> str:
+    """
+    :version: 0.6.0
+
+    """
     if (
             author is None
             and "GIT_AUTHOR_NAME" in os.environ

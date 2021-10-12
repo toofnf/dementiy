@@ -99,6 +99,14 @@ def read_object(sha: str, gitdir: pathlib.Path) -> tp.Tuple[str, bytes]:
 
 
 def read_tree(data: bytes) -> tp.List[tp.Tuple[int, str, str]]:
+    """
+    :version: 0.6.0
+
+    Считывание объекта дерева
+
+    :param data:
+    :return:
+    """
     tree = []
     length = 21
     while data:
@@ -118,7 +126,9 @@ def read_tree(data: bytes) -> tp.List[tp.Tuple[int, str, str]]:
 
 def cat_file(obj_name: str, pretty: bool = True) -> None:
     """
-    :version: 0.3.0
+    :version: 0.3.0 + 0.6.0
+
+    Вывод файлов, аналог функции cat
 
     :param obj_name:
     :param pretty:
@@ -135,7 +145,6 @@ def cat_file(obj_name: str, pretty: bool = True) -> None:
                 "tree" if tree[0] == 40000 else "blob",
                 tree[2] + "\t" + tree[1]
             )
-
 
 
 def find_tree_files(tree_sha: str, gitdir: pathlib.Path) -> tp.List[tp.Tuple[str, str]]:
