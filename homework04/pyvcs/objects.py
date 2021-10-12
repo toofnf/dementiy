@@ -99,7 +99,22 @@ def read_object(sha: str, gitdir: pathlib.Path) -> tp.Tuple[str, bytes]:
 
 
 def read_tree(data: bytes) -> tp.List[tp.Tuple[int, str, str]]:
-    pass
+    tree = []
+    length = 21
+    while data:
+        start_sha = data.index(b"\00")
+        mode, name = data[:start_sha].split(b" ")
+        sha = data[start_sha+1:start_sha+length]
+        tree.append(
+            (
+                int(mode.decode()),  # мод
+                name.decode(),  # имя
+                sha.hex()  # sha1
+            )
+        )
+        data = data[start_sha+length:]
+    return tree
+
 
 
 def cat_file(obj_name: str, pretty: bool = True) -> None:
@@ -112,7 +127,16 @@ def cat_file(obj_name: str, pretty: bool = True) -> None:
     """
     gitdir = repo_find()
     fmt, data = read_object(obj_name, gitdir)
-    print(data.decode() if pretty else data)
+    if fmt in ("blob", "commit"):
+        print(data.decode() if pretty else data)
+    else:
+        for tree in read_tree(data):
+            print(
+                f"{tree[0]:06}",
+                "tree" if tree[0] == 40000 else "blob",
+                tree[2] + "\t" + tree[1]
+            )
+
 
 
 def find_tree_files(tree_sha: str, gitdir: pathlib.Path) -> tp.List[tp.Tuple[str, str]]:
